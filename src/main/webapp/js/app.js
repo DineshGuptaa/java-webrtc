@@ -1,4 +1,5 @@
-var socket = new WebSocket('ws://' + window.location.host + room);
+
+var socket = new WebSocket('wss://' + window.location.host + room);
 
 socket.onmessage = function(message) {
 	var msg = JSON.parse(message.data);
@@ -43,11 +44,17 @@ socket.onmessage = function(message) {
 var pc;
 var configuration = {
 	"iceServers" : [ {
-		"url" : "stun:stun.l.google.com:19302"
+		"urls" : "stun:stun.l.google.com:19302"
 	} ]
 };
 var stream;
-var pc = new webkitRTCPeerConnection(configuration);
+var pc = null;
+
+if(window.RTCPeerConnection){
+	pc = new RTCPeerConnection(configuration);
+}else{
+	pc = new webkitRTCPeerConnection(configuration);
+}
 var connected = false;
 var mediaConstraints = {
 	'mandatory' : {
@@ -69,7 +76,7 @@ pc.onicecandidate = function(e) {
 	}
 };
 
-pc.onaddstream = function(e) {
+pc.ontrack = function(e) {
 	console.log('start remote video stream');
 	vid2.src = URL.createObjectURL(e.stream);
 	vid2.play();
@@ -77,7 +84,7 @@ pc.onaddstream = function(e) {
 
 function broadcast() {
 	// gets local video stream and renders to vid1
-	navigator.webkitGetUserMedia({
+	navigator.getUserMedia({
 		audio : true,
 		video : true
 	}, function(s) {
@@ -98,7 +105,7 @@ function broadcast() {
 }
 
 function start() {
-	pc.createOffer(function(description) {
+	pc.createOffer().then(function(description) {
 		pc.setLocalDescription(description);
 		socket.send(JSON.stringify({
 			type : 'received_offer',

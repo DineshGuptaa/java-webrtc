@@ -49,7 +49,7 @@ public class ApplicationServlet extends HttpServlet {
 			w.write("<div class=\"section container\">\n" + 
 					"    <h3>WebRTC</h3>\n" +
 					"    <form action=\"app\">\n" + 
-					"        <label for=\"r\">Please enter a room name.</label>\n" + 
+					"        <label for=\"r\">Please enter a room number.</label>\n" + 
 					"        <input type=\"number\" name=\"r\" id=\"r\" />\n" + 
 					"        <p>" +
 					"        <input type=\"submit\" value\"Join\" />\n" +
@@ -66,7 +66,8 @@ public class ApplicationServlet extends HttpServlet {
 					"    var room = \"" + req.getContextPath() + "/server/"+ room + "\";\n" +
 					"    var initCall = " + rooms.containsKey(room) + ";\n" + 
 					"</script>\n" +
-					"<script src=\"js/app.js\" type=\"text/javascript\"></script>\n");
+					"<script src=\"js/app.js\" type=\"text/javascript\"></script>\n" +
+					"<script src=\"https://webrtc.github.io/adapter/adapter-latest.js\"></script>");
 		}
 		w.write("<!-- End Document -->\n" + 
 				"</body>\n" + 
